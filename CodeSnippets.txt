@@ -1,0 +1,490 @@
+MapContainer.js (v1):
+
+import React from "react";
+import {
+  GoogleMap,
+  LoadScript,
+  Marker,
+} from "@react-google-maps/api";
+
+
+const MapContainer = () => {
+  const mapStyles = {
+    height: "100vh",
+    width: "100%",
+  };
+
+  Solapur
+  const defaultCenter = {
+    lat: 17.6599188,
+    lng: 75.9063906,
+  };
+
+  return (
+    <LoadScript googleMapsApiKey="AIzaSyAGmhgPo_KMysxAF3bJTCJrs9RdWJWRhM4">
+      <GoogleMap mapContainerStyle={mapStyles} zoom={13} center={defaultCenter}>
+        <Marker position={defaultCenter} />
+      </GoogleMap>
+    </LoadScript>
+  );
+};
+
+export default MapContainer;
+
+
+
+
+
+
+
+
+
+
+
+
+
+// DischargeInput.js
+
+import React, { useState } from 'react';
+
+const DischargeInupt = () => {
+  const [number, setNumber] = useState('');
+
+  const handleUploadImage = async () => {
+    try {
+      const response = await fetch('http://localhost:5000/upload_image', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ number: parseInt(number) }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        console.log('Image uploaded successfully!');
+      } else {
+        console.error('Error uploading image:', data.error);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  return (
+    <div>
+      <label>
+        Enter a number:
+        <input type="number" value={number} onChange={(e) => setNumber(e.target.value)} />
+      </label>
+      <button onClick={handleUploadImage}>Upload Image</button>
+    </div>
+
+    
+  );
+};
+
+export default DischargeInput;
+
+
+// MapContainer.js
+
+import React from "react";
+import {
+  GoogleMap,
+  LoadScript,
+  Marker,
+  GroundOverlay,
+} from "@react-google-maps/api";
+import { storage } from "../firebase-config";
+import image from "../images/test.png"
+
+const MapContainer = () => {
+  const mapStyles = {
+    height: "100vh",
+    width: "100%",
+  };
+
+  const imageBounds = {
+    north: 26.342165634762075,
+    south: 26.323165319486552,
+    east: 91.02395126776126,
+    west: 90.98953316168216,
+  };
+
+  return (
+    <LoadScript googleMapsApiKey="AIzaSyAGmhgPo_KMysxAF3bJTCJrs9RdWJWRhM4">
+      <GoogleMap
+        mapContainerStyle={mapStyles}
+        zoom={13}
+        center={{ lat: 26.330421, lng: 91.004051 }}
+      >
+        <GroundOverlay bounds={imageBounds} url={image} opacity={0.2} />
+      </GoogleMap>
+    </LoadScript>
+  );
+};
+
+export default MapContainer;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Working Code for Uplaoding the Image:
+
+import React, { useState, useEffect } from "react";
+import { GoogleMap, LoadScript, GroundOverlay } from "@react-google-maps/api";
+import { storage } from "../firebase-config";
+
+const App = () => {
+  const [inputtedNumber, setInputtedNumber] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+
+  const mapStyles = {
+    height: "100%",
+    width: "100%",
+  };
+
+  const imageBounds = {
+    north: 26.342165634762075,
+    south: 26.323165319486552,
+    east: 91.02395126776126,
+    west: 90.98953316168216,
+  };
+
+  const handleNumberChange = (newNumber) => {
+    setInputtedNumber(newNumber);
+  };
+
+  const handleUploadImage = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/upload_image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ number: parseInt(inputtedNumber) }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        console.log("Image uploaded successfully!");
+      } else {
+        console.error("Error uploading image:", data.error);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchImage = async () => {
+      try {
+        const imageRef = storage.ref(`images/${inputtedNumber}.jpg`);
+        const url = await imageRef.getDownloadURL();
+        setImageUrl(url);
+      } catch (error) {
+        console.error("Error fetching image:", error);
+        console.error("Error in this fetching image:", inputtedNumber);
+      }
+    };
+
+    if (inputtedNumber) {
+      const delay = 10000;
+      const fetchTimeout = setTimeout(() => {
+        fetchImage();
+      }, delay);
+
+      return () => clearTimeout(fetchTimeout);
+    }
+  }, [inputtedNumber]);
+
+  return (
+    <div className="main_content">
+      <div className="discharge_input">
+        <div className="form">
+          <label>Enter Discharge Value *</label>
+          <input
+            type="number"
+            value={inputtedNumber || ""}
+            onChange={(e) => handleNumberChange(e.target.value)}
+          />
+          <button onClick={handleUploadImage}>Forecaste Flood</button>
+        </div>
+      </div>
+
+      <div className="map_container">
+        <LoadScript googleMapsApiKey="AIzaSyAGmhgPo_KMysxAF3bJTCJrs9RdWJWRhM4">
+          <GoogleMap
+            mapContainerStyle={mapStyles}
+            zoom={13}
+            center={{ lat: 26.330421, lng: 91.004051 }}
+          >
+            {imageUrl && (
+              <GroundOverlay bounds={imageBounds} url={imageUrl} opacity={0.2} />
+            )}
+          </GoogleMap>
+        </LoadScript>
+      </div>
+    </div>
+  );
+};
+
+export default App;
+
+
+# Flask app (app.py)
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import firebase_admin
+from firebase_admin import credentials, storage
+
+app = Flask(__name__)
+CORS(app)
+
+# Initialize Firebase
+cred = credentials.Certificate("credentials.json")
+firebase_admin.initialize_app(cred, {"storageBucket": "sih1289-ecoprotectors.appspot.com"})
+
+@app.route('/upload_image', methods=['POST'])
+def upload_image():
+    try:
+        data = request.get_json()
+        number = data.get('number')
+        
+        # Assuming the image is present in the current working directory with a fixed name "example.jpg"
+        image_path = "test.png"
+
+        print(f"Image upload request for number: {number}")
+
+        # Upload image to Firebase Storage
+        bucket = storage.bucket()
+        # Convert number to string before creating the blob path
+        blob = bucket.blob(f"images/{number}.jpg")
+        blob.upload_from_filename(image_path)
+
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+This is completely working code -
+
+# Flask app (app.py)
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import firebase_admin
+from firebase_admin import credentials, storage, firestore
+from datetime import datetime
+
+app = Flask(__name__)
+CORS(app)
+
+# Initialize Firebase
+cred = credentials.Certificate("credentials.json")
+firebase_admin.initialize_app(cred, {"storageBucket": "sih1289-project-web.appspot.com"})
+
+# Initialize Firestore
+db = firestore.client()
+
+@app.route('/upload_image', methods=['POST'])
+def upload_image():
+    try:
+        data = request.get_json()
+        number = data.get('number')
+        
+        # Assuming the image is present in the current working directory with a fixed name "example.jpg"
+        image_path = "test.png"
+
+        print(f"Image upload request for number: {number}")
+
+        # Upload image to Firebase Storage
+        bucket = storage.bucket()
+        print(1)
+        # Convert number to string before creating the blob path
+        blob = bucket.blob(f"images/{number}.jpg")
+        print(2)
+        blob.upload_from_filename(image_path)
+        print(3)
+        print(blob.public_url)
+        print(4)
+
+        blob.make_public()
+
+        image_url = blob.public_url
+
+        print(image_url)
+
+        timestamp = datetime.now()
+
+        forecast_data = {
+            'discharge': number,
+            'image_url': image_url,
+            'timestamp': timestamp
+        }
+
+        db.collection('forecast').add(forecast_data)
+
+        return jsonify({'success': True, 'image_url':image_url})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+
+
+
+This is completely working code -
+
+import React, { useState } from "react";
+import { GoogleMap, LoadScript, GroundOverlay } from "@react-google-maps/api";
+
+const App = () => {
+  const [inputtedNumber, setInputtedNumber] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+
+  const mapStyles = {
+    height: "100%",
+    width: "100%",
+  };
+
+  const imageBounds = {
+    north: 26.342165634762075,
+    south: 26.323165319486552,
+    east: 91.02395126776126,
+    west: 90.98953316168216,
+  };
+
+  const handleNumberChange = (newNumber) => {
+    setInputtedNumber(newNumber);
+  };
+
+  const handleUploadImage = async () => {
+    try {
+      const response = await fetch("http://localhost:5000/upload_image", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ number: parseInt(inputtedNumber) }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Network response was not ok");
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        console.log("Image uploaded successfully!");
+        console.log(data.image_url);
+        setImageUrl(data.image_url);
+      } else {
+        console.error("Error uploading image:", data.error);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  };
+
+
+  return (
+    <div className="main_content">
+      <div className="discharge_input">
+        <div className="form">
+          <label>Enter Discharge Value *</label>
+          <input
+            type="number"
+            value={inputtedNumber || ""}
+            onChange={(e) => handleNumberChange(e.target.value)}
+          />
+          <button onClick={handleUploadImage}>Forecaste Flood</button>
+        </div>
+      </div>
+
+      <div className="map_container">
+        <LoadScript googleMapsApiKey="AIzaSyAGmhgPo_KMysxAF3bJTCJrs9RdWJWRhM4">
+          <GoogleMap
+            mapContainerStyle={mapStyles}
+            zoom={13}
+            center={{ lat: 26.330421, lng: 91.004051 }}
+          >
+            {imageUrl && (
+              <GroundOverlay bounds={imageBounds} url={imageUrl} opacity={0.2} />
+            )}
+          </GoogleMap>
+        </LoadScript>
+      </div>
+    </div>
+  );
+};
+
+export default App;
