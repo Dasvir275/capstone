@@ -1,0 +1,482 @@
+// App.js
+// import React, { useState, useEffect } from "react";
+// import { GoogleMap, LoadScript, GroundOverlay } from "@react-google-maps/api";
+// // import { auth, firestore, storage } from "../firebase-config";
+// import { auth, db, storage } from "../firebase-config";
+// import { query, collection, where, getDocs, size } from "firebase/firestore";
+
+// const App = () => {
+//   const [inputtedNumber, setInputtedNumber] = useState(null);
+//   const [imageUrl, setImageUrl] = useState(null);
+
+//   const mapStyles = {
+//     height: "100%",
+//     width: "100%",
+//   };
+
+//   const imageBounds = {
+//     north: 26.342165634762075,
+//     south: 26.323165319486552,
+//     east: 91.02395126776126,
+//     west: 90.98953316168216,
+//   };
+
+//   const handleNumberChange = (newNumber) => {
+//     setInputtedNumber(newNumber);
+//   };
+
+//   const fetchImage = async () => {
+//     try {
+//       const imageQuerySnapshot = await getDocs(
+//         query(
+//           collection(db, "forecast"),
+//           where("discharge", "==", parseInt(inputtedNumber))
+//         )
+//       );
+
+//       if (imageQuerySnapshot.docs.length === 0) {
+//         console.error("No document found with the given discharge value");
+//         return;
+//       }
+
+//       const data = imageQuerySnapshot.docs[0].data();
+
+//       console.log(data.image_url);
+
+//       setImageUrl(data.image_url);
+//     } catch (error) {
+//       console.error("Error fetching image:", error);
+//       console.error("Error in this fetching image:", inputtedNumber);
+//     }
+//   };
+
+//   const handleUploadImage = async () => {
+//     try {
+//       const response = await fetch("http://localhost:5000/upload_image", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ number: parseInt(inputtedNumber) }),
+//       });
+
+//       if (!response.ok) {
+//         throw new Error("Network response was not ok");
+//       }
+
+//       const data = await response.json();
+//       if (data.success) {
+//         console.log("Image uploaded successfully!");
+
+//         // Fetch image after successful upload
+//         fetchImage();
+//       } else {
+//         console.error("Error uploading image:", data.error);
+//       }
+//     } catch (error) {
+//       console.error("Error:", error);
+//     }
+//   };
+
+//   return (
+//     <div className="main_content">
+//       <div className="discharge_input">
+//         <div className="form">
+//           <label>Enter Discharge Value *</label>
+//           <input
+//             type="number"
+//             value={inputtedNumber || ""}
+//             onChange={(e) => handleNumberChange(e.target.value)}
+//           />
+//           <button onClick={handleUploadImage}>Forecaste Flood</button>
+//         </div>
+//       </div>
+
+//       <div className="map_container">
+//         <LoadScript googleMapsApiKey="AIzaSyAGmhgPo_KMysxAF3bJTCJrs9RdWJWRhM4">
+//           <GoogleMap
+//             mapContainerStyle={mapStyles}
+//             zoom={13}
+//             center={{ lat: 26.330421, lng: 91.004051 }}
+//           >
+//             {imageUrl && (
+//               <GroundOverlay
+//                 bounds={imageBounds}
+//                 url={imageUrl}
+//                 opacity={0.2}
+//               />
+//             )}
+//           </GoogleMap>
+//         </LoadScript>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default App;
+
+// import React, { useState } from "react";
+// import {
+//   GoogleMap,
+//   LoadScript,
+//   GroundOverlay,
+//   Marker,
+// } from "@react-google-maps/api";
+// import { storage } from "../firebase-config";
+// import image_url from "../images/test.png";
+
+// const MainContent = () => {
+//   const [inputtedNumber, setInputtedNumber] = useState(null);
+//   const [imageUrl, setImageUrl] = useState(null);
+//   const [markers, setMarkers] = useState([]);
+
+//   const mapStyles = {
+//     height: "100%",
+//     width: "100%",
+//   };
+
+//   const imageBounds = {
+//     north: 26.342165634762075,
+//     south: 26.323165319486552,
+//     east: 91.02395126776126,
+//     west: 90.98953316168216,
+//   };
+
+//   const addMarkers = (markerData) => {
+//     setMarkers(markerData);
+//   };
+
+//   const handleNumberChange = (newNumber) => {
+//     setInputtedNumber(newNumber);
+//   };
+
+//   // const handleUploadImage = async () => {
+//   //   try {
+//   //     const response = await fetch("http://localhost:5000/upload_image", {
+//   //       method: "POST",
+//   //       headers: {
+//   //         "Content-Type": "application/json",
+//   //       },
+//   //       body: JSON.stringify({ number: parseInt(inputtedNumber) }),
+//   //     });
+
+//   //     if (!response.ok) {
+//   //       throw new Error("Network response was not ok");
+//   //     }
+
+//   //     const data = await response.json();
+//   //     if (data.success) {
+//   //       console.log("Image uploaded successfully!");
+
+//   //       // Fetch and overlay the image
+//   //       fetchImage();
+
+//   //       // Fetch marker data (replace this with your actual API call)
+//   //       const markerData = await fetchMarkerData(); // Placeholder for the fetchMarkerData function
+//   //       addMarkers(markerData);
+//   //     } else {
+//   //       console.error("Error uploading image:", data.error);
+//   //     }
+//   //   } catch (error) {
+//   //     console.error("Error:", error);
+//   //   }
+//   // };
+
+//   // const fetchImage = async () => {
+//   //   try {
+//   //     const imageRef = storage.ref(`/images/${inputtedNumber}.jpg`);
+//   //     const url = await imageRef.getDownloadURL();
+//   //     setImageUrl(url);
+//   //   } catch (error) {
+//   //     console.error("Error fetching image:", error);
+//   //     console.error("Error in fetching image:", inputtedNumber);
+//   //   }
+//   // };
+
+//   const fetchMarkerData = async () => {
+//     return [
+//       { lat: 26.335, lng: 91.008, label: "Marker 1" },
+//       { lat: 26.327, lng: 90.999, label: "Marker 2" },
+//     ];
+//   };
+
+//   return (
+//     <div className="main_content">
+//       <div className="discharge_input">
+//         <div className="form">
+//           <label>Enter Discharge Value *</label>
+//           <input
+//             type="number"
+//             value={inputtedNumber || ""}
+//             onChange={(e) => handleNumberChange(e.target.value)}
+//           />
+//           {/* <button onClick={handleUploadImage}>Forecast Flood</button> */}
+//           <button>Forecast Flood</button>
+//         </div>
+//       </div>
+
+//       <div className="map_container">
+//         <LoadScript googleMapsApiKey="AIzaSyAGmhgPo_KMysxAF3bJTCJrs9RdWJWRhM4">
+//           <GoogleMap
+//             mapContainerStyle={mapStyles}
+//             zoom={13}
+//             center={{ lat: 26.330421, lng: 91.004051 }}
+//           >
+//             {imageUrl && (
+//               <GroundOverlay
+//                 bounds={imageBounds}
+//                 url={imageUrl}
+//                 opacity={0.2}
+//               />
+//             )}
+
+//             {markers.map((marker, index) => (
+//               <Marker
+//                 key={index}
+//                 position={{ lat: marker.lat, lng: marker.lng }}
+//                 label={marker.name}
+//               />
+//             ))}
+//           </GoogleMap>
+//         </LoadScript>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default MainContent;
+
+import React, { useState } from "react";
+import {
+  GoogleMap,
+  LoadScript,
+  GroundOverlay,
+  Marker,
+} from "@react-google-maps/api";
+import { storage } from "../firebase-config";
+import image_url from "../images/test.png";
+
+const MainContent = () => {
+  const [inputtedNumber, setInputtedNumber] = useState(null);
+  const [imageUrl, setImageUrl] = useState(null);
+  const [markers, setMarkers] = useState([]);
+
+  const mapStyles = {
+    height: "100%",
+    width: "100%",
+  };
+
+  const imageBounds = {
+    north: 26.342165634762075,
+    south: 26.323165319486552,
+    east: 91.02395126776126,
+    west: 90.98953316168216,
+  };
+
+  const addMarkers = (markerData) => {
+    setMarkers(markerData);
+  };
+
+  const handleNumberChange = (newNumber) => {
+    setInputtedNumber(newNumber);
+  };
+
+  const handleUploadImage = () => {
+    // Fetch and overlay the local image
+    fetchImage();
+
+    // Fetch marker data (replace this with your actual API call)
+    const markerData = fetchMarkerData(); // Placeholder for the fetchMarkerData function
+    addMarkers(markerData);
+  };
+
+  const fetchImage = () => {
+    try {
+      // Assuming the images are stored in the "public" folder
+      // const localImageUrl = require(`../images/${inputtedNumber}.jpg`);
+      setImageUrl(image_url);
+    } catch (error) {
+      console.error("Error fetching local image:", error);
+      console.error("Error in fetching local image:", inputtedNumber);
+    }
+  };
+
+  const fetchMarkerData = () => {
+    return [
+      { lat: 26.335, lng: 91.008, name: "Marker 1" },
+      { lat: 26.327, lng: 90.999, name: "Marker 2" },
+    ];
+  };
+
+  return (
+    <div className="main_content">
+      <div className="discharge_input">
+        <div className="form">
+          <label>Enter Discharge Value *</label>
+          <input
+            type="number"
+            value={inputtedNumber || ""}
+            onChange={(e) => handleNumberChange(e.target.value)}
+          />
+          <button onClick={handleUploadImage}>Forecast Flood</button>
+        </div>
+      </div>
+
+      <div className="map_container">
+        <LoadScript googleMapsApiKey="AIzaSyAGmhgPo_KMysxAF3bJTCJrs9RdWJWRhM4">
+          <GoogleMap
+            mapContainerStyle={mapStyles}
+            zoom={}
+            center={{ lat: 26.330421, lng: 91.004051 }}
+          >
+            {imageUrl && (
+              <GroundOverlay
+                bounds={imageBounds}
+                url={imageUrl}
+                opacity={0.2}
+              />
+            )}
+
+            {markers.map((marker, index) => (
+              <Marker
+                key={index}
+                position={{ lat: marker.lat, lng: marker.lng }}
+                label={marker.name}
+              />
+            ))}
+          </GoogleMap>
+        </LoadScript>
+      </div>
+    </div>
+  );
+};
+
+export default MainContent;
+
+
+// import React, { useState } from "react";
+// import {
+//   GoogleMap,
+//   LoadScript,
+//   GroundOverlay,
+//   Marker,
+// } from "@react-google-maps/api";
+// import { storage } from "../firebase-config";
+
+// const MainContent = () => {
+//   const [inputtedNumber, setInputtedNumber] = useState(null);
+//   const [imageUrl, setImageUrl] = useState(null);
+//   const [markers, setMarkers] = useState([]);
+
+//   const mapStyles = {
+//     height: "100%",
+//     width: "100%",
+//   };
+
+//   const imageBounds = {
+//     north: 26.342165634762075,
+//     south: 26.323165319486552,
+//     east: 91.02395126776126,
+//     west: 90.98953316168216,
+//   };
+
+//   const addMarkers = (markerData) => {
+//     setMarkers(markerData);
+//   };
+
+//   const handleNumberChange = (newNumber) => {
+//     setInputtedNumber(newNumber);
+//   };
+
+//   const handleUploadImage = async () => {
+//     try {
+//       const response = await fetch("http://localhost:5000/upload_image", {
+//         method: "POST",
+//         headers: {
+//           "Content-Type": "application/json",
+//         },
+//         body: JSON.stringify({ number: parseInt(inputtedNumber) }),
+//       });
+
+//       if (!response.ok) {
+//         throw new Error("Network response was not ok");
+//       }
+
+//       const data = await response.json();
+//       if (data.image_url) {
+//         console.log("Image uploaded successfully!");
+
+//         // Fetch and overlay the image
+//         setImageUrl(data.image_url);
+
+//         // Fetch marker data (replace this with your actual API call)
+//         const markerData = await fetchMarkerData(); // Placeholder for the fetchMarkerData function
+//         addMarkers(markerData);
+//       } else {
+//         console.error("Error uploading image:", data.error);
+//       }
+//     } catch (error) {
+//       console.error("Error:", error);
+//     }
+//   };
+
+//   // const fetchImage = async () => {
+//   //   try {
+//   //     let url = await storage.ref(`/images/${inputtedNumber}.jpg`).getDownloadURL();
+//   //     setImageUrl(url);
+//   //   } catch (error) {
+//   //     console.error("Error fetching image:", error);
+//   //   }
+//   // };
+
+//   const fetchMarkerData = async () => {
+//     return [
+//       { lat: 26.335, lng: 91.008, name: "Marker 1" },
+//       { lat: 26.327, lng: 90.999, name: "Marker 2" },
+//     ];
+//   };
+
+//   return (
+//     <div className="main_content">
+//       <div className="discharge_input">
+//         <div className="form">
+//           <label>Enter Discharge Value *</label>
+//           <input
+//             type="number"
+//             value={inputtedNumber || ""}
+//             onChange={(e) => handleNumberChange(e.target.value)}
+//           />
+//           <button onClick={handleUploadImage}>Forecast Flood</button>
+//         </div>
+//       </div>
+
+//       <div className="map_container">
+//         <LoadScript googleMapsApiKey="AIzaSyAGmhgPo_KMysxAF3bJTCJrs9RdWJWRhM4">
+//           <GoogleMap
+//             mapContainerStyle={mapStyles}
+//             zoom={13}
+//             center={{ lat: 26.330421, lng: 91.004051 }}
+//           >
+//             {imageUrl && (
+//               <GroundOverlay
+//                 bounds={imageBounds}
+//                 url={imageUrl}
+//                 opacity={0.2}
+//               />
+//             )}
+
+//             {markers.map((marker, index) => (
+//               <Marker
+//                 key={index}
+//                 position={{ lat: marker.lat, lng: marker.lng }}
+//                 label={marker.name}
+//               />
+//             ))}
+//           </GoogleMap>
+//         </LoadScript>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default MainContent;

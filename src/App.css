@@ -1,0 +1,299 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Outfit', sans-serif;
+}
+
+:root {
+  --base: white;
+  --primary: royalblue;
+  --secondary: lightblue;
+  --greyshade: #6b6b6b;
+  --darkshade: black;
+}
+
+body::-webkit-scrollbar {
+  display: none;
+  /* Chrome and Safari */
+}
+
+.home_page {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+}
+
+/* === Header - Start === */
+
+.header {
+  width: 100%;
+  height: 17vh;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  align-content: center;
+  /* background-color: #0F4C9F; */
+  background-color: white;
+  /* box-shadow: 0 0 15px 0 rgba(0, 0, 0, 0.3); */
+  box-shadow: 0 0 20px rgba(102, 163, 233, 0.6);
+  z-index: 1;
+}
+
+.header .header_left {
+  margin-left: 8vmin;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-content: center;
+}
+
+.header .header_left .header_left_image img {
+  width: 12vmin;
+  height: auto;
+  margin-right: 5vmin;
+}
+
+.header .header_left .header_left_titles {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: flex-start;
+  align-content: center;
+}
+
+.header .header_left .header_left_titles h1 {
+  font-size: 5.5vmin;
+  /* color: white; */
+  color: #0F4C9F;
+  margin-bottom: 0.5vmin;
+}
+
+.header .header_left .header_left_titles h3 {
+  color: #ff7243;
+  font-size: 3vmin;
+}
+
+.header .header_right {
+  margin-right: 6vmin;
+}
+
+.header .header_right img {
+  width: 40vmin;
+  height: auto;
+}
+
+/* === Header - End === */
+
+
+
+
+
+.main_content {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-content: center;
+  /* border: 1px solid red; */
+  width: 100%;
+}
+
+
+/* === DischargeInput - Start === */
+
+.input_form {
+  /* border: 1px solid blue; */
+  padding: 6vmin;
+  width: 20%;
+}
+
+.input_form .weather_condition {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-content: center;
+  align-items: left;
+  margin-bottom: 3vmin;
+  /* border: 1px solid red; */
+}
+
+.input_form .weather_condition label {
+  font-size: 2.25vmin;
+  font-weight: 450;
+  margin-bottom: 1.5vmin;
+  color: #171717;
+  letter-spacing: 0.5px;
+}
+
+.input_form .weather_condition select {
+  padding: 5px;
+  font-size: 2.15vmin;
+  border-radius: 3px;
+  border: 1.5px solid #171717;
+  color: #171717;
+}
+
+.input_form .weather_condition option {
+  padding: 5px;
+  font-size: 2.3vmin;
+  border-radius: 3px;
+  border: 1.5px solid #171717;
+  color: #171717;
+  letter-spacing: 0.5px;
+}
+
+.input_form .discharge_value_or_river_stage {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-content: center;
+  align-items: left;
+  /* border: 1px solid red; */
+}
+
+.input_form .discharge_value_or_river_stage label {
+  font-size: 2.25vmin;
+  font-weight: 450;
+  margin-bottom: 1.5vmin;
+  color: #171717;
+  letter-spacing: 0.5px;
+}
+
+.input_form .discharge_value_or_river_stage select {
+  padding: 5px;
+  font-size: 2.15vmin;
+  border-radius: 3px;
+  border: 1.5px solid #171717;
+  color: #171717;
+  letter-spacing: 0.5px;
+}
+
+.input_form .discharge_value_or_river_stage option {
+  padding: 5px;
+  font-size: 2.3vmin;
+  border-radius: 3px;
+  border: 1.5px solid #171717;
+  color: #171717;
+  letter-spacing: 0.5px;
+}
+
+.input_discharge_value {
+  margin-top: 3vmin;
+  display: flex;
+  flex-direction: column;
+}
+
+.input_discharge_value input {
+  font-size: 2.1vmin;
+  font-weight: 400;
+  margin-bottom: 1.5vmin;
+  color: #171717;
+  letter-spacing: 0.5px;
+  margin-top: 1.5vmin;
+  padding: 0.7vmin;
+}
+
+.input_river_stage {
+  margin-top: 3vmin;
+  display: flex;
+  flex-direction: column;
+}
+
+.input_river_stage input {
+  font-size: 2.1vmin;
+  font-weight: 400;
+  margin-bottom: 1.5vmin;
+  color: #171717;
+  letter-spacing: 0.5px;
+  margin-top: 1.5vmin;
+  padding: 0.7vmin;
+}
+
+.input_form .forecast_buttons {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-content: center;
+  align-items: center;
+  margin: 3vmin 0;
+}
+
+.input_form .forecast_buttons button {
+
+  width: 45%;
+  cursor: pointer;
+  border-radius: 2px;
+  /* background-color: var(--primary);
+  border: 2px solid var(--primary); */
+  background-color: #0F4C9F;
+  border: 2px solid #0F4C9F;
+  color: white;
+  justify-self: center;
+  padding: 1.3vmin 1vmin;
+  font-size: 2.05vmin;
+  font-weight: 300;
+  letter-spacing: 0.5px;
+  transition: 0.3s ease;
+
+}
+
+.input_form .forecast_buttons .forecast_flood {
+  background-color: #0F4C9F;
+  border: 2px solid #0F4C9F;
+}
+
+.input_form .forecast_buttons .forecast_flood:hover {
+  background-color: var(--primary);
+  border-color: var(--primary);
+  box-shadow: 0 0 10px rgba(102, 133, 233, 0.6);
+  /* position: relative;
+  bottom: 1px;
+  transition: 0.3s ease; */
+}
+
+.input_form .forecast_buttons .reset_forecast {
+  background-color: #707070;
+  border: 2px solid #707070;
+}
+
+.input_form .forecast_buttons .reset_forecast:hover {
+  background-color: #808080;
+  border-color: #808080;
+  box-shadow: 0 0 10px rgba(137, 137, 137, 0.6);
+}
+
+/* === DischargeInput - End === */
+
+.map_container {
+  width: 80%;
+  height: 90vh;
+  /* border: 1px solid red; */
+}
+
+/* Ensures the main container takes the full height of the screen */
+.app-container {
+  position: relative;
+  min-height: 100vh;
+  padding-bottom: 100px; /* Height of the Chat component */
+}
+
+/* Style for the Chat component */
+.app-container .chat {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: #f8f8f8; /* Adjust the background color as needed */
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2); /* Optional: Add shadow to give some depth */
+  z-index: 1000;
+}
+
+/* Ensure other content is above the Chat component */
+.app-container .home-page {
+  padding-bottom: 100px; /* Make space for the fixed Chat component */
+}

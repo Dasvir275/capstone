@@ -1,0 +1,47 @@
+For those wondering what is Axios in React, here is a brief introduction. Axios is a popular JavaScript library for making HTTP requests from a web browser or a Node. js server. It performs various operations, such as retrieving and sending data and handling responses.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+const coordinates = [
+  [81.60007072846042, 17.183399247337558],
+  [81.70444084564792, 17.183399247337558],
+  [81.70444084564792, 17.276527282781593],
+  [81.60007072846042, 17.276527282781593],
+  [81.60007072846042, 17.183399247337558]
+];
+
+const minLat = Math.min(...coordinates.map(coord => coord[1]));
+const maxLat = Math.max(...coordinates.map(coord => coord[1]));
+const minLng = Math.min(...coordinates.map(coord => coord[0]));
+const maxLng = Math.max(...coordinates.map(coord => coord[0]));
+
+const imageBounds = {
+  north: maxLat,
+  south: minLat,
+  east: maxLng,
+  west: minLng
+};
+
+console.log(imageBounds);
+This will output:
+
+javascript
+Copy code
+{
+  north: 17.276527282781593,
+  south: 17.183399247337558,
+  east: 81.70444084564792,
+  west: 81.60007072846042
+}
