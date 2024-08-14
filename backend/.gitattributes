@@ -1,0 +1,2 @@
+Output/ filter=lfs diff=lfs merge=lfs -text
+capstone filter=lfs diff=lfs merge=lfs -text
