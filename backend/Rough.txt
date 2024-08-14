@@ -1,0 +1,249 @@
+# # Flask app (app.py)
+# from flask import Flask, request, jsonify
+# from flask_cors import CORS
+# import firebase_admin
+# from firebase_admin import credentials, storage
+
+# app = Flask(__name__)
+# CORS(app)
+
+# # Initialize Firebase
+# cred = credentials.Certificate("credentials.json")
+# firebase_admin.initialize_app(cred, {"storageBucket": "sih1289-ecoprotectors.appspot.com"})
+
+# @app.route('/upload_image', methods=['POST'])
+# def upload_image():
+#     try:
+#         data = request.get_json()
+#         number = data.get('number')
+        
+#         # Assuming the image is present in the current working directory with a fixed name "example.jpg"
+#         image_path = "test.png"
+
+#         print(f"Image upload request for number: {number}")
+
+#         # Upload image to Firebase Storage
+#         bucket = storage.bucket()
+#         # Convert number to string before creating the blob path
+#         blob = bucket.blob(f"images/{number}.jpg")
+#         blob.upload_from_filename(image_path)
+
+#         return jsonify({'success': True})
+#     except Exception as e:
+#         return jsonify({'error': str(e)})
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
+
+# ====================================
+
+# # Flask app (app.py)
+# from flask import Flask, request, jsonify
+# from flask_cors import CORS
+# import firebase_admin
+# from firebase_admin import credentials, storage, firestore
+# from datetime import datetime
+
+# app = Flask(__name__)
+# CORS(app)
+
+# # Initialize Firebase
+# cred = credentials.Certificate("credentials.json")
+# firebase_admin.initialize_app(cred, {
+#     "storageBucket": "sih1289-ecoprotectors.appspot.com",
+#     "databaseURL": "https://sih1289-ecoprotectors.firebaseio.com"
+# })
+
+# db = firestore.client()
+
+# @app.route('/upload_image', methods=['POST'])
+# def upload_image():
+#     try:
+#         data = request.get_json()
+#         number = data.get('number')
+        
+#         # Assuming the image is present in the current working directory with a fixed name "example.jpg"
+#         image_path = "test.png"
+
+#         print(f"Image upload request for number: {number}")
+
+#         # Upload image to Firebase Storage
+#         bucket = storage.bucket()
+#         blob = bucket.blob(f"images/{number}.jpg")
+
+#         print(f"Image upload request for number: {number}")
+#         blob.upload_from_filename(image_path)
+
+#         # Get the public URL of the uploaded image
+#         image_url = blob.public_url
+#         # print("After public url")
+#         print(image_url)
+
+#           # Store data in Firestore with timestamp
+#         timestamp = datetime.now()  # Get the current timestamp
+#         data = {
+#             'discharge': number,
+#             'image_url': image_url,
+#             'timestamp': timestamp
+#         }
+#         db.collection('forecast').add(data)
+
+#         return jsonify({'success': True})
+#     except Exception as e:
+#         return jsonify({'error': str(e)})
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
+
+
+# This code is uploading the image_url which is actually storage location of the image in the firebase storage. I need the actual image_url which should display the image.
+
+# ==============================================
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# Flask app (app.py)
+from flask import Flask, request, jsonify
+from flask_cors import CORS
+import firebase_admin
+from firebase_admin import credentials, storage, firestore
+from datetime import datetime
+import asyncio
+
+app = Flask(__name__)
+CORS(app)
+
+# Initialize Firebase
+cred = credentials.Certificate("credentials.json")
+firebase_admin.initialize_app(cred, {
+    "storageBucket": "sih1289-ecoprotectors.appspot.com",
+    "databaseURL": "https://sih1289-ecoprotectors.firebaseio.com"
+})
+
+db = firestore.client()
+
+async def make_public(blob):
+    await blob.make_public()
+
+@app.route('/upload_image', methods=['POST'])
+async def upload_image():
+    try:
+        data = request.get_json()
+        number = data.get('number')
+        
+        # Assuming the image is present in the current working directory with a fixed name "example.jpg"
+        image_path = "test.png"
+
+        print(f"Image upload request for number: {number}")
+
+        # Upload image to Firebase Storage
+        bucket = storage.bucket()
+        blob = bucket.blob(f"images/{number}.jpg")
+
+        blob.upload_from_filename(image_path)
+
+        # Make the blob publicly accessible (async operation)
+        await make_public(blob)
+
+        # Get the public URL of the uploaded image
+        image_url = blob.public_url
+        print(image_url)
+
+        # Store data in Firestore with timestamp
+        timestamp = datetime.now()
+        data = {
+            'discharge': number,
+            'image_url': image_url,
+            'timestamp': timestamp
+        }
+        db.collection('forecast').add(data)
+
+        return jsonify({'success': True})
+    except Exception as e:
+        return jsonify({'error': str(e)})
+
+if __name__ == '__main__':
+    app.run(debug=True)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # Flask app (app.py)
+# from flask import Flask, request, jsonify
+# from flask_cors import CORS
+# import firebase_admin
+# from firebase_admin import credentials, storage, firestore
+
+# app = Flask(__name__)
+# CORS(app)
+
+# # Initialize Firebase
+# cred = credentials.Certificate("credentials.json")
+# firebase_admin.initialize_app(cred, {
+#     "storageBucket": "sih1289-ecoprotectors.appspot.com",
+#     "databaseURL": "https://sih1289-ecoprotectors.firebaseio.com"
+# })
+
+# # Initialize Firestore
+# db = firestore.client()
+
+# @app.route('/upload_image', methods=['POST'])
+# def upload_image():
+#     try:
+#         data = request.get_json()
+#         number = data.get('number')
+
+#         # Assuming the image is present in the current working directory with a fixed name "example.jpg"
+#         image_path = "test.png"
+
+#         # Upload image to Firebase Storage
+#         bucket = storage.bucket()
+#         blob = bucket.blob(f"images/{number}.jpg")
+#         blob.upload_from_filename(image_path)
+
+#         # Upload image to Firebase Storage
+#         bucket = storage.bucket()
+#         # blob = bucket.blob(f"images/{number}.jpg")
+#         blob = bucket.blob(f"images/{number}.jpg")
+#         blob.upload_from_filename(image_path)
+
+#         # Get the download URL of the uploaded image
+#         image_url = blob.public_url
+
+#         # Store information in Firebase Firestore
+#         doc_ref = db.collection('images').document(number)
+#         doc_ref.set({
+#             'number': number,
+#             'image_url': image_url
+#         })
+
+#         return jsonify({'image_url': image_url})
+#     except Exception as e:
+#         return jsonify({'error': str(e)})
+
+# if __name__ == '__main__':
+#     app.run(debug=True)
