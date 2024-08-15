@@ -123,7 +123,7 @@ const MainContent = () => {
       </div>
 
       <div className="map_container">
-        <LoadScript googleMapsApiKey="AIzaSyAGmhgPo_KMysxAF3bJTCJrs9RdWJWRhM4">
+        <LoadScript googleMapsApiKey="api_key">
           <GoogleMap
             mapContainerStyle={mapStyles}
             zoom={13}
